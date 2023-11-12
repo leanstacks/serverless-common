@@ -1,12 +1,16 @@
 import httpStatus from 'http-status';
 
 import { BadRequestError } from './bad-request.error';
+import { HttpError } from './http.error';
 
 describe('BadRequestError', () => {
-  it('should have status code 400', () => {
-    const error = new BadRequestError();
+  it('should use constructor values', () => {
+    const error = new BadRequestError('message');
 
+    expect(error).toBeDefined();
+    expect(error.name).toBe('BadRequestError');
     expect(error.statusCode).toBe(400);
+    expect(error.message).toBe('message');
   });
 
   it('should have default message', () => {
@@ -15,10 +19,9 @@ describe('BadRequestError', () => {
     expect(error.message).toBe(httpStatus[`${httpStatus.BAD_REQUEST}_MESSAGE`]);
   });
 
-  it('should have name', () => {
+  it('should be instanceof HttpError', () => {
     const error = new BadRequestError();
 
-    expect(error instanceof BadRequestError).toBeTruthy();
-    expect(error.name).toBe('BadRequestError');
+    expect(error instanceof HttpError).toBeTruthy();
   });
 });
