@@ -7,6 +7,7 @@ import { BadRequestError } from '../errors';
  */
 export type ValidatorOptions = {
   eventSchema?: Joi.ObjectSchema;
+  logger?(message: string): void;
 };
 
 /**
@@ -24,6 +25,16 @@ const validationOptions: Joi.ValidationOptions = {
  */
 export const validator = (options: ValidatorOptions): MiddlewareObj => {
   /**
+   * Write a message to the application log.
+   * @param message string - The message to write.
+   */
+  const log = (message: string): void => {
+    if (options.logger) {
+      options.logger(message);
+    }
+  };
+
+  /**
    * Validate a `value` using a Joi `schema`.
    * @param schema - Joi schema
    * @param value - The value to be validated
@@ -39,11 +50,11 @@ export const validator = (options: ValidatorOptions): MiddlewareObj => {
    * @param request - Middy request context.
    */
   const before: middy.MiddlewareFn = (request): void => {
-    console.debug(`middleware::validator::before`);
+    log(`middleware::validator::before`);
     if (options.eventSchema) {
       const { error, value } = validate(options.eventSchema, request.event);
       if (error) {
-        console.warn(`validation error::${error}`);
+        log(`validation error::${error}`);
         throw new BadRequestError(error.message);
       }
       request.event = {

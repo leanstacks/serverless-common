@@ -7,7 +7,7 @@ import { HttpError } from '../errors/http.error';
 export type HttpErrorHandlerOptions = {
   defaultMessage: string;
   defaultStatusCode: number;
-  logger?(): void;
+  logger?(message: string): void;
 };
 
 const DEFAULT_OPTIONS: HttpErrorHandlerOptions = {
@@ -24,6 +24,16 @@ export const httpErrorHandler = (
   const options = {
     ...DEFAULT_OPTIONS,
     ...opts,
+  };
+
+  /**
+   * Write a message to the application log.
+   * @param message string - The message to write.
+   */
+  const log = (message: string): void => {
+    if (options.logger) {
+      options.logger(message);
+    }
   };
 
   /**
@@ -65,7 +75,7 @@ export const httpErrorHandler = (
 
     if (isHttpError(error)) {
       // type HttpError
-      console.debug('middleware::error-handler::HttpError', error);
+      log(`middleware::error-handler::HttpError ${error}`);
       request.response = {
         statusCode: error.statusCode || options.defaultStatusCode,
         body: JSON.stringify({
@@ -77,7 +87,7 @@ export const httpErrorHandler = (
       };
     } else if (isServiceError(error)) {
       // type ServiceError
-      console.debug('middleware::error-handler::ServiceError', error);
+      log(`middleware::error-handler::ServiceError ${error}`);
       request.response = {
         statusCode: error.statusCode || options.defaultStatusCode,
         body: JSON.stringify({
@@ -89,7 +99,7 @@ export const httpErrorHandler = (
       };
     } else {
       // any other type of Error
-      console.debug('middleware::error-handler::Error', error);
+      log(`middleware::error-handler::Error ${error}`);
       request.response = {
         statusCode: options.defaultStatusCode,
         body: JSON.stringify({
