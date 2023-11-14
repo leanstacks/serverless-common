@@ -1,3 +1,4 @@
+import { jest } from '@jest/globals';
 import { Request } from '@middy/core';
 import * as Joi from 'joi';
 import { BadRequestError } from '../errors/bad-request.error';
@@ -5,7 +6,7 @@ import { BadRequestError } from '../errors/bad-request.error';
 import { validator } from './validator-joi';
 import { requestFixture } from '../__fixtures__/middy.fixture';
 
-describe('validator-joi', () => {
+describe('JoiValidator', () => {
   const schema = Joi.object({
     s: Joi.string().required(),
     b: Joi.boolean().default(false),
@@ -16,6 +17,25 @@ describe('validator-joi', () => {
     const middleware = validator({ eventSchema: schema });
 
     expect(middleware.before).toBeDefined();
+  });
+
+  it('should write log when logger provided', () => {
+    type loggerFn = (msg: string) => void;
+    const mockLogger = jest.fn<loggerFn>();
+
+    const request: Request = {
+      ...requestFixture,
+      event: {
+        s: 'string',
+        b: 'true',
+        n: '100',
+      },
+    };
+    const middleware = validator({ eventSchema: schema, logger: mockLogger });
+
+    middleware.before?.(request);
+
+    expect(mockLogger).toHaveBeenCalled();
   });
 
   it('should validate successfully', () => {
