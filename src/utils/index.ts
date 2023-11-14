@@ -1,1 +1,1 @@
-export { middyfyAPIGateway } from './middyfy';
+export { middyfy } from './middyfy';
