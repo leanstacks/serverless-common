@@ -5,14 +5,17 @@ import { ServiceError } from '../errors/service.error';
 import { HttpError } from '../errors/http.error';
 
 export type HttpErrorHandlerOptions = {
-  defaultMessage: string;
-  defaultStatusCode: number;
+  defaultMessage?: string;
+  defaultStatusCode?: number;
   logger?(message: string): void;
 };
 
+const DEFAULT_MESSAGE = 'Unhandled error';
+const DEFAULT_STATUS_CODE = 500;
+
 const DEFAULT_OPTIONS: HttpErrorHandlerOptions = {
-  defaultMessage: 'Unhandled error',
-  defaultStatusCode: 500,
+  defaultMessage: DEFAULT_MESSAGE,
+  defaultStatusCode: DEFAULT_STATUS_CODE,
 };
 
 export const httpErrorHandler = (
@@ -21,7 +24,7 @@ export const httpErrorHandler = (
   /**
    * Merged options.
    */
-  const options = {
+  const options: HttpErrorHandlerOptions = {
     ...DEFAULT_OPTIONS,
     ...opts,
   };
@@ -77,19 +80,19 @@ export const httpErrorHandler = (
       // type HttpError
       log(`middleware::error-handler::HttpError ${error}`);
       request.response = {
-        statusCode: error.statusCode || options.defaultStatusCode,
+        statusCode: error.statusCode ?? options.defaultStatusCode,
         body: JSON.stringify({
           name: error.name,
-          message: error.message || options.defaultMessage,
-          code: error.statusCode || options.defaultStatusCode,
-          statusCode: error.statusCode || options.defaultStatusCode,
+          message: error.message ?? options.defaultMessage,
+          code: error.statusCode ?? options.defaultStatusCode,
+          statusCode: error.statusCode ?? options.defaultStatusCode,
         }),
       };
     } else if (isServiceError(error)) {
       // type ServiceError
       log(`middleware::error-handler::ServiceError ${error}`);
       request.response = {
-        statusCode: error.statusCode || options.defaultStatusCode,
+        statusCode: error.statusCode ?? options.defaultStatusCode,
         body: JSON.stringify({
           name: error.name,
           message: error.message || options.defaultMessage,
@@ -101,10 +104,10 @@ export const httpErrorHandler = (
       // any other type of Error
       log(`middleware::error-handler::Error ${error}`);
       request.response = {
-        statusCode: options.defaultStatusCode,
+        statusCode: options.defaultStatusCode ?? DEFAULT_STATUS_CODE,
         body: JSON.stringify({
           name: error.name,
-          message: error.message || options.defaultMessage,
+          message: error.message ?? options.defaultMessage,
           code: options.defaultStatusCode,
           statusCode: options.defaultStatusCode,
         }),
