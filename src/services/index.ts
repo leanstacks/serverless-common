@@ -1,2 +1,7 @@
-export { LambdaConfig, lambdaEnv, validateConfig } from './config.service';
+export {
+  LambdaConfig,
+  lambdaConfigSchema,
+  lambdaConfigValues,
+  validateConfig,
+} from './config.service';
 export { DynamoService } from './dynamo.service';
