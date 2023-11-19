@@ -25,12 +25,10 @@ import {
 } from '@aws-sdk/lib-dynamodb';
 import { DynamoDBClient, DynamoDBClientConfig } from '@aws-sdk/client-dynamodb';
 
-import { ConfigService, LambdaConfig } from './config.service';
-
-const config = ConfigService.getConfig<LambdaConfig>();
+import { lambdaEnv } from './config.service';
 
 const dynamoDbClientConfig: DynamoDBClientConfig = {
-  region: config.AWS_REGION,
+  region: lambdaEnv.AWS_REGION,
 };
 
 const marshallOptions = {
