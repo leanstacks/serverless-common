@@ -32,7 +32,6 @@ export type LambdaConfig = {
  * @throws Throws a `ServiceError` when validation is unsuccessful.
  */
 export function validateConfig<TConfig>(schema: Joi.ObjectSchema<TConfig>): TConfig {
-  console.log(`config::validateConfig::${JSON.stringify(process.env, null, 2)}`);
   const { error, value } = schema.validate(process.env, {
     abortEarly: false,
     allowUnknown: true,
@@ -47,7 +46,7 @@ export function validateConfig<TConfig>(schema: Joi.ObjectSchema<TConfig>): TCon
 /**
  * A Joi ObjectSchema to validate the base AWS Lambda function configuration values.
  */
-const lambdaConfigSchema = Joi.object<LambdaConfig>({
+export const lambdaConfigSchema = Joi.object({
   AWS_EXECUTION_ENV: Joi.string().required(),
   AWS_LAMBDA_FUNCTION_NAME: Joi.string().required(),
   AWS_LAMBDA_FUNCTION_MEMORY_SIZE: Joi.string().required(),
@@ -60,4 +59,4 @@ const lambdaConfigSchema = Joi.object<LambdaConfig>({
  * This is useful when your function does not have additional configuration attributes.
  * @see {@link LambdaConfig}
  */
-export const lambdaEnv = validateConfig<LambdaConfig>(lambdaConfigSchema);
+export const lambdaConfigValues = validateConfig<LambdaConfig>(lambdaConfigSchema);
