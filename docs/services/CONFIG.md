@@ -1,4 +1,4 @@
-:point-left: [Back](/README.md)
+[:point_left: Back](/README.md)
 
 # Configuration
 
