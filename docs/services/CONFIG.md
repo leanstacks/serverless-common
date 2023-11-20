@@ -14,7 +14,7 @@ components to validate and access a typed configuration object.
 AWS supplies a default set of attributes to every Lambda function, e.g. `AWS_REGION`, and
 you may define additional custom attributes for your functions.
 
-## Using the default configuration, `LambdaConfig`
+## Using `LambdaConfig`, the default configuration
 
 When a serverless component does not declare any additional environment variables, but
 needs access to the base configuration supplied to all Lambda functions, the
@@ -22,9 +22,9 @@ needs access to the base configuration supplied to all Lambda functions, the
 The example below illustrates how to use `lambdaConfigValues`.
 
 Simply import `lambdaConfigValues` into any module which requires access to the configuration.
-This ready to use object is of type `LambdaConfig`.
+This ready to use object is of type [`LambdaConfig`](/src/services/config.service.ts).
 
-```js
+```ts
 // some-component.ts
 import { lambdaConfigValues as config } from '@leanstacks/serverless-common';
 
@@ -39,7 +39,7 @@ and [Joi](https://joi.dev/) validation schema. The example below illustrates how
 Create a configuration module in your serverless project. Import the `LambdaConfig` type, the
 `lambdaConfigSchema` Joi schema for that type, and the `validateConfig` utility function.
 
-```js
+```ts
 // my-config.ts
 import { LambdaConfig, lambdaConfigSchema, validateConfig } from '@leanstacks/serverless-common';
 
@@ -54,7 +54,7 @@ type MyConfig = LambdaConfig & {
 const myConfigSchema = lambdaConfigSchema.keys({
   TABLE_NAME: Joi.string().required(),
   QUEUE_NAME: Joi.string().required(),
-  EXPIRES_IN_DAYS: Joi.number().default(30)
+  EXPIRES_IN_DAYS: Joi.number().default(30),
 });
 
 const config: MyConfig = validateConfig<MyConfig>(myConfigSchema);
@@ -64,7 +64,7 @@ export default config;
 Now the exported `config` object of type `MyConfig` may be used in any other module within the
 serverless component. For example...
 
-```js
+```ts
 // some-component.ts
 import config from 'my-config';
 
