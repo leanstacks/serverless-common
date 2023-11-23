@@ -1,4 +1,4 @@
-:house: [Home](/) | :books: [Docs](../DOCS.md)
+:house: [Home](/README.md) | :books: [Docs](../DOCS.md)
 
 # Configuration
 

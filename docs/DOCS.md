@@ -1,4 +1,4 @@
-:house: [Home](/)
+:house: [Home](/README.md)
 
 # @leanstacks/serverless-common Documentation
 
