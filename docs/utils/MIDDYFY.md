@@ -3,7 +3,7 @@
 # Middyfy
 
 This document describes how to create a serverless event handler component leveraging
-shared components from the [`serverless-common`](/) package.
+shared components from the `serverless-common` package.
 
 ## Why middleware?
 
@@ -21,7 +21,7 @@ export type Handler<TEvent = any, TResult = any> = (
 ) => void | Promise<TResult>;
 ```
 
-Middy provides the ability to wrap AWS Lambda handler functions in middleware. Each middleware provides the ability to act on the event _before_ the handler, act on the result _after_ the handler, or to act on unhandled errors thrown from the handler.
+Middy provides the ability to wrap AWS Lambda handler functions in middleware. Each middleware provides the ability to act on the event _before_ the handler, act on the result _after_ the handler, or to act on unhandled errors thrown from the handler or middleware.
 
 Want to know more? Read the [official Middy guide for how middleware works](https://middy.js.org/docs/intro/how-it-works).
 

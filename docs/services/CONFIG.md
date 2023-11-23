@@ -3,7 +3,7 @@
 # Configuration
 
 This document describes how to configure a serverless application component leveraging
-shared components from the [`serverless-common`](/) package.
+shared components from the `serverless-common` package.
 
 ## How it works
 
