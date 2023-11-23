@@ -57,6 +57,7 @@ const myConfigSchema = lambdaConfigSchema.keys({
   EXPIRES_IN_DAYS: Joi.number().default(30),
 });
 
+// validate and process custom configuration
 const config: MyConfig = validateConfig<MyConfig>(myConfigSchema);
 export default config;
 ```
@@ -73,7 +74,7 @@ console.log(`The table name is ${config.TABLE_NAME}`);
 
 ## Performance considerations
 
-The configuration attributes are validatedby Joi. To ensure that performance is not negatively
+The configuration attributes are validated by Joi. To ensure that performance is not negatively
 impacted, this validation occurs just once, when the configuration module
 is first loaded by the module loader. When modules subsequently import the configuration
 object, the pre-processed object is loaded without executing the validation process again.
