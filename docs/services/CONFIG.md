@@ -1,4 +1,4 @@
-:point_left: [Back](/README.md)
+:house: [Home](/) | :books: [Docs](../DOCS.md)
 
 # Configuration
 
