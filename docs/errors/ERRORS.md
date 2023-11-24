@@ -141,11 +141,11 @@ try {
 
 When any of the error family of classes is thrown from an API Gateway Lambda function, the `http-error-handler` middleware intercepts the error and, using the information within the error, creates an informative response for the API client. The response body payload is similar to the example below.
 
-````json
+```json
 {
   "name": "NotFoundError",
   "message": "The requested resource could not be found but may be available in the future. Subsequent requests by the client are permissible.",
   "code": 404,
   "statusCode": 404
-}```
-````
+}
+```
