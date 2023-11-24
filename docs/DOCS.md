@@ -8,4 +8,5 @@ The documentation is organized into sections by module.
 
 1. [Handlers](/docs/utils/MIDDYFY.md)
 1. [Configuration](/docs/services/CONFIG.md)
-1. [DynamoDB Client](/docs//services/DYNAMO.md)
+1. [DynamoDB Client](/docs/services/DYNAMO.md)
+1. [Errors](/docs/errors/ERRORS.md)
