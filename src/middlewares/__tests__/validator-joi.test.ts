@@ -1,10 +1,10 @@
 import { jest } from '@jest/globals';
 import { Request } from '@middy/core';
 import * as Joi from 'joi';
-import { BadRequestError } from '../errors/bad-request.error';
+import { BadRequestError } from '../../errors/bad-request.error';
 
-import { validator } from './validator-joi';
-import { requestFixture } from '../__fixtures__/middy.fixture';
+import { validator } from '../validator-joi';
+import { requestFixture } from '../../__fixtures__/middy.fixture';
 
 describe('JoiValidator', () => {
   const schema = Joi.object({
