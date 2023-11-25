@@ -28,7 +28,13 @@ export default [
       commonjs(),
       typescript({
         tsconfig: './tsconfig.json',
-        exclude: ['jest.config.ts', '**/*.test.ts', '**/__tests__/**/*', '**/__fixtures__/**/*'],
+        exclude: [
+          'jest.config.ts',
+          'jest.setup.ts',
+          '**/*.test.ts',
+          '**/__tests__/**/*',
+          '**/__fixtures__/**/*',
+        ],
       }),
       terser(),
     ],
