@@ -41,6 +41,42 @@ const unmarshallOptions = {
 };
 const translateConfig: TranslateConfig = { marshallOptions, unmarshallOptions };
 
+console.log(`DYNAMO::CREATE DOCUMENT CLIENT`);
+const documentClient = DynamoDBDocumentClient.from(
+  new DynamoDBClient(dynamoDbClientConfig),
+  translateConfig,
+);
+
+export const batchWriteItems = (
+  input: BatchWriteCommandInput,
+): Promise<BatchWriteCommandOutput> => {
+  return documentClient.send(new BatchWriteCommand(input));
+};
+
+export const deleteItem = (input: DeleteCommandInput): Promise<DeleteCommandOutput> => {
+  return documentClient.send(new DeleteCommand(input));
+};
+
+export const getItem = (input: GetCommandInput): Promise<GetCommandOutput> => {
+  return documentClient.send(new GetCommand(input));
+};
+
+export const putItem = (input: PutCommandInput): Promise<PutCommandOutput> => {
+  return documentClient.send(new PutCommand(input));
+};
+
+export const queryItems = (input: QueryCommandInput): Promise<QueryCommandOutput> => {
+  return documentClient.send(new QueryCommand(input));
+};
+
+export const scanItems = (input: ScanCommandInput): Promise<ScanCommandOutput> => {
+  return documentClient.send(new ScanCommand(input));
+};
+
+export const updateItem = (input: UpdateCommandInput): Promise<UpdateCommandOutput> => {
+  return documentClient.send(new UpdateCommand(input));
+};
+
 export class DynamoService {
   private static instance: DynamoService;
   private client: DynamoDBDocumentClient;
