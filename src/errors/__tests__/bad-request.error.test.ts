@@ -1,7 +1,7 @@
 import httpStatus from 'http-status';
 
-import { BadRequestError } from './bad-request.error';
-import { HttpError } from './http.error';
+import { BadRequestError } from '../bad-request.error';
+import { HttpError } from '../http.error';
 
 describe('BadRequestError', () => {
   it('should use constructor values', () => {

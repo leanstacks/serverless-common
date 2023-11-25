@@ -1,7 +1,7 @@
 import httpStatus from 'http-status';
 
-import { NotFoundError } from './not-found.error';
-import { HttpError } from './http.error';
+import { NotFoundError } from '../not-found.error';
+import { HttpError } from '../http.error';
 
 describe('NotFoundError', () => {
   it('should use constructor values', () => {

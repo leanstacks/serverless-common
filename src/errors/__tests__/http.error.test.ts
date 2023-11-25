@@ -1,4 +1,4 @@
-import { HttpError } from './http.error';
+import { HttpError } from '../http.error';
 
 describe('HttpError', () => {
   it('should use constructor values', () => {

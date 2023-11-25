@@ -1,4 +1,4 @@
-import { ServiceError } from './service.error';
+import { ServiceError } from '../service.error';
 
 describe('ServiceError', () => {
   it('should use constructor values', () => {
