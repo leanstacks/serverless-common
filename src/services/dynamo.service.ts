@@ -41,85 +41,104 @@ const unmarshallOptions = {
 };
 const translateConfig: TranslateConfig = { marshallOptions, unmarshallOptions };
 
-console.log(`DYNAMO::CREATE DOCUMENT CLIENT`);
+/**
+ * Create a DynamoDBDocumentClient. This will be created once during AWS Lambda function
+ * cold start and placed in the module loader. It will be reused across function invocations.
+ */
 const documentClient = DynamoDBDocumentClient.from(
   new DynamoDBClient(dynamoDbClientConfig),
   translateConfig,
 );
 
-export const batchWriteItems = (
-  input: BatchWriteCommandInput,
-): Promise<BatchWriteCommandOutput> => {
+/**
+ * Modify a DynamoDB Table with a batch of Put and/or Delete operations.
+ * @param input A `BatchWriteCommandInput` object.
+ * @returns A Promise which resolves to a `BatchWriteCommandOputput` object.
+ */
+const batchWriteItems = (input: BatchWriteCommandInput): Promise<BatchWriteCommandOutput> => {
   return documentClient.send(new BatchWriteCommand(input));
 };
 
-export const deleteItem = (input: DeleteCommandInput): Promise<DeleteCommandOutput> => {
+/**
+ * Delete a single item from a table.
+ * @param input A `DeleteCommandInput` object.
+ * @returns A Promise which resolves to a `DeleteCommandOutput` object.
+ */
+const deleteItem = (input: DeleteCommandInput): Promise<DeleteCommandOutput> => {
   return documentClient.send(new DeleteCommand(input));
 };
 
-export const getItem = (input: GetCommandInput): Promise<GetCommandOutput> => {
+/**
+ * Get a single item from a table.
+ * @param input A `GetCommandInput` object.
+ * @returns A Promise which resolves to a `GetCommandOutput` object.
+ */
+const getItem = (input: GetCommandInput): Promise<GetCommandOutput> => {
   return documentClient.send(new GetCommand(input));
 };
 
-export const putItem = (input: PutCommandInput): Promise<PutCommandOutput> => {
+/**
+ * Creates or replaces a single item in a table.
+ * @param input A `PutCommandInput` object.
+ * @returns A Promise which resolves to a `PutCommandOutput` object.
+ */
+const putItem = (input: PutCommandInput): Promise<PutCommandOutput> => {
   return documentClient.send(new PutCommand(input));
 };
 
-export const queryItems = (input: QueryCommandInput): Promise<QueryCommandOutput> => {
+/**
+ * Searches a table for items matching query criteria.
+ * @param input A `QueryCommandInput` object.
+ * @returns A Promise which resolves to a `QueryCommandOutput` object.
+ */
+const queryItems = (input: QueryCommandInput): Promise<QueryCommandOutput> => {
   return documentClient.send(new QueryCommand(input));
 };
 
-export const scanItems = (input: ScanCommandInput): Promise<ScanCommandOutput> => {
+/**
+ * Returns all items from a table with optional filter critera.
+ * @param input A `ScanCommandInput` object.
+ * @returns A Promise which resolves to a `ScanCommandOutput` object.
+ */
+const scanItems = (input: ScanCommandInput): Promise<ScanCommandOutput> => {
   return documentClient.send(new ScanCommand(input));
 };
 
-export const updateItem = (input: UpdateCommandInput): Promise<UpdateCommandOutput> => {
+/**
+ * Edits the attributes of an existing item or creates a new item if none exists. Use
+ * conditional updates to prevent undesired item creation.
+ * @param input An `UpdateCommandInput` object.
+ * @returns A Promise which resolves to an `UpdateCommandOutput` object.
+ */
+const updateItem = (input: UpdateCommandInput): Promise<UpdateCommandOutput> => {
   return documentClient.send(new UpdateCommand(input));
 };
 
-export class DynamoService {
-  private static instance: DynamoService;
-  private client: DynamoDBDocumentClient;
+/**
+ * A `DynamoClient` provides operations for accessing and mutating one or more Items
+ * within an AWS DynamoDB Table.
+ */
+type DynamoClient = {
+  batchWriteItems: (input: BatchWriteCommandInput) => Promise<BatchWriteCommandOutput>;
+  deleteItem: (input: DeleteCommandInput) => Promise<DeleteCommandOutput>;
+  getItem: (input: GetCommandInput) => Promise<GetCommandOutput>;
+  putItem: (input: PutCommandInput) => Promise<PutCommandOutput>;
+  queryItems: (input: QueryCommandInput) => Promise<QueryCommandOutput>;
+  scanItems: (input: ScanCommandInput) => Promise<ScanCommandOutput>;
+  updateItem: (input: UpdateCommandInput) => Promise<UpdateCommandOutput>;
+};
 
-  private constructor() {
-    this.client = DynamoDBDocumentClient.from(
-      new DynamoDBClient(dynamoDbClientConfig),
-      translateConfig,
-    );
-  }
+/**
+ * Use the `DynamoService` to access or mutate Items within an AWS DynamoDB Table.
+ */
+const DynamoService: DynamoClient = {
+  batchWriteItems,
+  deleteItem,
+  getItem,
+  putItem,
+  queryItems,
+  scanItems,
+  updateItem,
+};
 
-  public static getInstance() {
-    if (!DynamoService.instance) {
-      DynamoService.instance = new DynamoService();
-    }
-    return DynamoService.instance;
-  }
-
-  batchWrite(input: BatchWriteCommandInput): Promise<BatchWriteCommandOutput> {
-    return this.client.send(new BatchWriteCommand(input));
-  }
-
-  delete(input: DeleteCommandInput): Promise<DeleteCommandOutput> {
-    return this.client.send(new DeleteCommand(input));
-  }
-
-  get(input: GetCommandInput): Promise<GetCommandOutput> {
-    return this.client.send(new GetCommand(input));
-  }
-
-  put(input: PutCommandInput): Promise<PutCommandOutput> {
-    return this.client.send(new PutCommand(input));
-  }
-
-  query(input: QueryCommandInput): Promise<QueryCommandOutput> {
-    return this.client.send(new QueryCommand(input));
-  }
-
-  scan(input: ScanCommandInput): Promise<ScanCommandOutput> {
-    return this.client.send(new ScanCommand(input));
-  }
-
-  update(input: UpdateCommandInput): Promise<UpdateCommandOutput> {
-    return this.client.send(new UpdateCommand(input));
-  }
-}
+export default DynamoService;

@@ -4,4 +4,5 @@ export {
   lambdaConfigValues,
   validateConfig,
 } from './config.service';
-export { DynamoService } from './dynamo.service';
+
+export { default as DynamoService } from './dynamo.service';
