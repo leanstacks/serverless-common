@@ -22,4 +22,4 @@ npm install @leanstacks/serverless-common
 
 ## Documentation
 
-Read the [documentation](/docs/DOCS.md).
+For more detailed information regarding specific components see the [documentation](/docs/DOCS.md).
