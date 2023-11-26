@@ -1,10 +1,10 @@
 import { Request } from '@middy/core';
 import { jest } from '@jest/globals';
 
-import { HttpError, ServiceError } from '../errors';
+import { HttpError, ServiceError } from '../../errors';
 
-import { httpErrorHandler } from './error-handler-http';
-import { requestFixture } from '../__fixtures__/middy.fixture';
+import { httpErrorHandler } from '../error-handler-http';
+import { requestFixture } from '../../__fixtures__/middy.fixture';
 
 describe('HttpErrorHandler', () => {
   it('should create the middleware', () => {

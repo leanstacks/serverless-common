@@ -1,3 +1,7 @@
+/**
+ * The `ServiceError` class extends `Error` providing additional, standardized attributes
+ * for AWS Lambda functions. The attributes include: `code` and `statusCode`.
+ */
 export class ServiceError extends Error {
   name = 'ServiceError';
   code = 500;

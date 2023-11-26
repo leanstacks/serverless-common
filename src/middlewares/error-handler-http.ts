@@ -4,6 +4,10 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { ServiceError } from '../errors/service.error';
 import { HttpError } from '../errors/http.error';
 
+/**
+ * `HttpErrorHandlerOptions` provide configuration to the `http-error-handler`
+ * middleware.
+ */
 export type HttpErrorHandlerOptions = {
   defaultMessage?: string;
   defaultStatusCode?: number;
@@ -18,6 +22,11 @@ const DEFAULT_OPTIONS: HttpErrorHandlerOptions = {
   defaultStatusCode: DEFAULT_STATUS_CODE,
 };
 
+/**
+ * Create middleware to process errors thrown from AWS Lambda handler functions.
+ * @param [opts] - Optional. `HttpErrorHandlerOptions` configuration.
+ * @returns Middleware to process errors thrown handler functions.
+ */
 export const httpErrorHandler = (
   opts?: HttpErrorHandlerOptions,
 ): MiddlewareObj<APIGatewayProxyEvent, APIGatewayProxyResult> => {

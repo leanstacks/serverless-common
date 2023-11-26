@@ -1,7 +1,7 @@
 import httpStatus from 'http-status';
 
-import { ForbiddenError } from './forbidden.error';
-import { HttpError } from './http.error';
+import { ForbiddenError } from '../forbidden.error';
+import { HttpError } from '../http.error';
 
 describe('ForbiddenError', () => {
   it('should use constructor values', () => {
