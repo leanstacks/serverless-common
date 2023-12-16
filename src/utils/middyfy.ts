@@ -1,7 +1,13 @@
 import middy from '@middy/core';
 import httpEventNormalizer from '@middy/http-event-normalizer';
 import jsonBodyParser from '@middy/http-json-body-parser';
-import { APIGatewayProxyEvent, APIGatewayProxyResult, Context, ScheduledEvent } from 'aws-lambda';
+import {
+  APIGatewayProxyEvent,
+  APIGatewayProxyResult,
+  Context,
+  SNSEvent,
+  ScheduledEvent,
+} from 'aws-lambda';
 import { ObjectSchema } from 'joi';
 
 import { validator } from '../middlewares/validator-joi';
@@ -20,6 +26,11 @@ export type APIGatewayHandlerFn = (
  * (e.g. cron events from AWS EventBridge).
  */
 export type ScheduledHandlerFn = (event: ScheduledEvent, context: Context) => Promise<void>;
+
+/**
+ * The AWS Lambda handler function signature for SNS events.
+ */
+export type SNSHandlerFn = (event: SNSEvent, Context: Context) => Promise<void>;
 
 /**
  * Base options for `middyfy` functions.
@@ -42,6 +53,13 @@ export type APIGatewayMiddyfyOptions = MiddyfyOptions<APIGatewayHandlerFn> & {
  * Options for middyfied Scheduled event handler functions.
  */
 export type ScheduledMiddyfyOptions = MiddyfyOptions<ScheduledHandlerFn> & {
+  eventSchema?: ObjectSchema;
+};
+
+/**
+ * Options for middyfied SNS event handler functions.
+ */
+export type SNSMiddyfyOptions = MiddyfyOptions<SNSHandlerFn> & {
   eventSchema?: ObjectSchema;
 };
 
@@ -72,6 +90,18 @@ export const middyfyAPIGateway = (options: APIGatewayMiddyfyOptions) => {
  * @returns A middyfied handler function.
  */
 export const middyfyScheduled = (options: ScheduledMiddyfyOptions) => {
+  return middy(options.handler).use(
+    validator({ eventSchema: options.eventSchema, logger: options.logger }),
+  );
+};
+
+/**
+ * Wraps a SNS event handler function in middleware, returning the
+ * AWS Lambda handler function.
+ * @param options - The `SNSMiddyfyOptions` object.
+ * @returns A middyfied handler function.
+ */
+export const middyfySNS = (options: SNSMiddyfyOptions) => {
   return middy(options.handler).use(
     validator({ eventSchema: options.eventSchema, logger: options.logger }),
   );
