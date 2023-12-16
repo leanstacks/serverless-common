@@ -4,7 +4,13 @@ import crypto from 'crypto';
  * Default identifier length.
  */
 const ID_LENGTH_DEFAULT = 16;
+/**
+ * Minimum identifier length.
+ */
 const ID_LENGTH_MINIMUM = 1;
+/**
+ * Maximum identifier length.
+ */
 const ID_LENGTH_MAXIMUM = 128;
 
 /**
