@@ -7,3 +7,5 @@ export {
   ScheduledHandlerFn,
   ScheduledMiddyfyOptions,
 } from './middyfy';
+
+export { default as ID } from './id';
