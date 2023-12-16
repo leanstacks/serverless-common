@@ -1,4 +1,5 @@
 import middy from '@middy/core';
+import eventNormalizer from '@middy/event-normalizer';
 import httpEventNormalizer from '@middy/http-event-normalizer';
 import jsonBodyParser from '@middy/http-json-body-parser';
 import {
@@ -7,6 +8,7 @@ import {
   Context,
   SNSEvent,
   ScheduledEvent,
+  SQSHandler,
 } from 'aws-lambda';
 import { ObjectSchema } from 'joi';
 
@@ -64,6 +66,13 @@ export type SNSMiddyfyOptions = MiddyfyOptions<SNSHandlerFn> & {
 };
 
 /**
+ * Options for middyfied SQS event handler functions.
+ */
+export type SQSMiddyfyOptions = MiddyfyOptions<SQSHandler> & {
+  eventSchema?: ObjectSchema;
+};
+
+/**
  * Wraps an AWS Gateway proxy event handler function in middleware, returning the
  * AWS Lambda handler function.
  * @param options - The `APIGatewayMiddyfyOptions` object.
@@ -105,4 +114,16 @@ export const middyfySNS = (options: SNSMiddyfyOptions) => {
   return middy(options.handler).use(
     validator({ eventSchema: options.eventSchema, logger: options.logger }),
   );
+};
+
+/**
+ * Wraps a SQS event handler function in middleware, returning the AWS Lambda
+ * handler function.
+ * @param options - The `SQSMiddyfyOptions` object.
+ * @returns A middyfied handler function.
+ */
+export const middyfySQS = (options: SQSMiddyfyOptions) => {
+  return middy(options.handler)
+    .use(eventNormalizer())
+    .use(validator({ eventSchema: options.eventSchema, logger: options.logger }));
 };
