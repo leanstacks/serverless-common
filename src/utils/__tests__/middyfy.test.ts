@@ -1,6 +1,12 @@
-import { APIGatewayProxyEvent, APIGatewayProxyResult, Context, ScheduledEvent } from 'aws-lambda';
+import {
+  APIGatewayProxyEvent,
+  APIGatewayProxyResult,
+  Context,
+  SNSEvent,
+  ScheduledEvent,
+} from 'aws-lambda';
 
-import { middyfyAPIGateway, middyfyScheduled } from '../middyfy';
+import { middyfyAPIGateway, middyfySNS, middyfyScheduled } from '../middyfy';
 
 describe('middyfyAPIGateway', () => {
   const handlerFn = async (
@@ -22,6 +28,16 @@ describe('middyfyScheduled', () => {
 
   it('should middyfyScheduled', () => {
     const handler = middyfyScheduled({ handler: handlerFn });
+
+    expect(handler).toBeDefined();
+  });
+});
+
+describe('middyfySNS', () => {
+  const handlerFn = async (event: SNSEvent, context: Context): Promise<void> => {};
+
+  it('should middyfySNS', () => {
+    const handler = middyfySNS({ handler: handlerFn });
 
     expect(handler).toBeDefined();
   });
