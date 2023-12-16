@@ -127,3 +127,41 @@ export const handle = middyfyAPIGateway({ handler, eventSchema });
 When an `eventSchema` is present in the middleware options, the Joi Validator middleware ensures that the event is valid. The middleware throws a ValidationError if it is invalid. The HTTP Error Handler knows how to handle a ValidationError, returning a response with status code 400 and an informative message.
 
 Notice that nothing changed with the handler function itself!
+
+## Creating a Scheduled event handler
+
+Use a Scheduled event handler when you need to run a Lambda function on a cron schedule.
+
+`To create a Scheduled event handler, you will need to create two modules: the handler function and the middyfy wrapper.
+
+Create the AWS Lambda Handler function with the usual signature...
+
+_/handlers/task-scheduled/handler.ts_
+
+```ts
+import { Context, ScheduledEvent } from 'aws-lambda';
+...
+
+export const handler = async (event: ScheduledEvent, context: Context): Promise<void> => {
+  try {
+    // perform business logic
+    await TaskService.sendReminders();
+
+  } catch (error) {
+    console.error('Failed to send task reminders. Detail:', error);
+    throw new ServiceError(error);
+  }
+};
+```
+
+Next, we need to _"middyfy"_ the handler function. This is just a fancy way of saying we are wrapping the handler function with middleware.
+
+_/handlers/task-scheduled/index.ts_
+
+```ts
+import { middyfyScheduled } from '@leanstacks/serverless-common';
+
+import { handler } from './handler';
+
+export const handle = middyfyScheduled({ handler, logger: console.log });
+```
