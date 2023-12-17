@@ -269,3 +269,78 @@ The handler is wrapped with two middlewares.
 
 1. The `event-normalizer` middleware performs a JSON parse on the `body`.
 2. The `validator` middleware will validate the event when an `eventSchema` is provided in the options.
+
+## Creating a Lambda event handler
+
+Use a Lambda event handler to process events from direct invocations from another Lambda function.
+
+> **NOTE:** This is generally considered to be an anti-pattern in serverless application design. See [Lambda functions calling Lambda functions](https://docs.aws.amazon.com/lambda/latest/operatorguide/functions-calling-functions.html) in the AWS Lambda guide. Consider SQS queues or Step Functions as an alternative.
+
+To create a Lambda event handler, you will need to create two modules: the handler function and the middyfy wrapper. You may optionally create a `schema.ts` module which provides a Joi validation schema for the `LambdaEvent`.
+
+Create the AWS Lambda Handler function with the usual signature...
+
+_/handlers/task-lambda/handler.ts_
+
+```ts
+import { Context } from 'aws-lambda';
+import { LambdaEvent, LambdaResult, middyfyLambda } from '@leanstacks/serverless-common';
+...
+
+type FindTaskEvent = {
+  taskId: string;
+};
+
+type FindTaskResult = {
+  task?: Task;
+};
+
+export const handler = async (
+  event: LambdaEvent<FindTaskEvent>,
+  context: Context,
+): Promise<LambdaResult<FindTaskResult>> => {
+  try {
+    // handle request
+    const { taskId } = event;
+    const task = await TaskService.findById(taskId);
+
+    // format and return response
+    if (task) {
+      return {
+        status: 200,
+        statusText: 'OK',
+        data: { task },
+      };
+    } else {
+      return {
+        status: 404,
+        statusText: 'Not Found',
+        data: {},
+      };
+    }
+  } catch (error) {
+    console.warn(`Failed to find Task. Detail: ${error}`);
+    return {
+      status: 500,
+      statusText: `${error}`,
+      data: {},
+    };
+  }
+};
+```
+
+Next, we need to _"middyfy"_ the handler function. This is just a fancy way of saying we are wrapping the handler function with middleware.
+
+_/handlers/task-lambda/index.ts_
+
+```ts
+import { middyfyLambda } from '@leanstacks/serverless-common';
+
+import { handler } from './handler';
+
+export const handle = middyfyLambda({ handler, logger: console.log });
+```
+
+The handler is wrapped with one middleware.
+
+1. The `validator` middleware will validate the event when an `eventSchema` is provided in the options.
