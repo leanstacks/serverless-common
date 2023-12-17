@@ -8,7 +8,6 @@ export {
   MiddyfyOptions,
   ScheduledHandlerFn,
   ScheduledMiddyfyOptions,
-  SNSHandlerFn,
   SNSMiddyfyOptions,
   SQSMiddyfyOptions,
 } from './middyfy';
