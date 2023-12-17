@@ -30,6 +30,31 @@ export type APIGatewayHandlerFn = (
 export type ScheduledHandlerFn = (event: ScheduledEvent, context: Context) => Promise<void>;
 
 /**
+ * A Lambda function for invocation by another Lambda function.
+ */
+export type LambdaEvent<TEvent = unknown> = TEvent;
+
+/**
+ * A Lambda function result for invocation by another Lambda function.
+ */
+export type LambdaResult<TResult = unknown> = {
+  status: number;
+  statusText: string;
+  data: TResult;
+};
+
+/**
+ * The AWS Lambda handler function signature for Lambda events, i.e. Lambda to
+ * Lambda function invocations.
+ * Note: This is generally considered an anti-pattern. Search for another
+ * design pattern before utilizing Lambda-to-Lambda.
+ */
+export type LambdaHandler<TEvent = unknown, TResult = unknown> = (
+  event: LambdaEvent<TEvent>,
+  context: Context,
+) => Promise<LambdaResult<TResult>>;
+
+/**
  * Base options for `middyfy` functions.
  */
 export type MiddyfyOptions<THandler> = {
@@ -64,6 +89,15 @@ export type SNSMiddyfyOptions = MiddyfyOptions<SNSHandler> & {
  * Options for middyfied SQS event handler functions.
  */
 export type SQSMiddyfyOptions = MiddyfyOptions<SQSHandler> & {
+  eventSchema?: ObjectSchema;
+};
+
+/**
+ * Options for middyfied Lambda event handler functions.
+ */
+export type LambdaMiddyfyOptions<TEvent = unknown, TResult = unknown> = MiddyfyOptions<
+  LambdaHandler<TEvent, TResult>
+> & {
   eventSchema?: ObjectSchema;
 };
 
@@ -121,4 +155,19 @@ export const middyfySQS = (options: SQSMiddyfyOptions) => {
   return middy(options.handler)
     .use(eventNormalizer())
     .use(validator({ eventSchema: options.eventSchema, logger: options.logger }));
+};
+
+/**
+ * Wraps a Lambda event handler function in middleware, returning the AWS
+ * Lambda handler function.
+ * Note: Lambda-to-Lambda invocations are considered an anti-pattern. Search
+ * for an alternative approach.
+ * @param options - The `LambdaMiddyfyOptions` object.
+ * @returns A middyfied handler function.
+ * @see {@link https://docs.aws.amazon.com/lambda/latest/operatorguide/functions-calling-functions.html}
+ */
+export const middyfyLambda = <TEvent, TResult>(options: LambdaMiddyfyOptions<TEvent, TResult>) => {
+  return middy(options.handler).use(
+    validator({ eventSchema: options.eventSchema, logger: options.logger }),
+  );
 };

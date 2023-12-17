@@ -8,7 +8,15 @@ import {
   ScheduledEvent,
 } from 'aws-lambda';
 
-import { middyfyAPIGateway, middyfySNS, middyfySQS, middyfyScheduled } from '../middyfy';
+import {
+  LambdaEvent,
+  LambdaResult,
+  middyfyAPIGateway,
+  middyfyLambda,
+  middyfySNS,
+  middyfySQS,
+  middyfyScheduled,
+} from '../middyfy';
 
 describe('middyfyAPIGateway', () => {
   const handlerFn = async (
@@ -54,6 +62,22 @@ describe('middyfySQS', () => {
 
   it('should middyfySQS', () => {
     const handler = middyfySQS({ handler: handlerFn });
+
+    expect(handler).toBeDefined();
+  });
+});
+
+describe('middyfyLambda', () => {
+  const handlerFn = async (event: LambdaEvent, context: Context): Promise<LambdaResult> => {
+    return {
+      status: 200,
+      statusText: 'OK',
+      data: 'test',
+    };
+  };
+
+  it('should middyfyLambda', () => {
+    const handler = middyfyLambda({ handler: handlerFn });
 
     expect(handler).toBeDefined();
   });
