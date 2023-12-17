@@ -11,7 +11,9 @@ import { lambdaConfigValues as config } from './config.service';
 const clientConfig: SQSClientConfig = {
   region: config.AWS_LAMBDA_FUNCTION_VERSION,
 };
+console.debug(`SQSService::SQSClientConfig::${JSON.stringify(clientConfig)}`);
 
+console.debug('SQSService::creating new SQSClient');
 const sqsClient = new SQSClient(clientConfig);
 
 /**

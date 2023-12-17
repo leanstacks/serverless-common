@@ -30,17 +30,21 @@ import { lambdaConfigValues as config } from './config.service';
 const dynamoDbClientConfig: DynamoDBClientConfig = {
   region: config.AWS_REGION,
 };
+console.debug(`DynamoService::DynamoDBClientConfig::${JSON.stringify(dynamoDbClientConfig)}`);
 
 const marshallOptions = {
   convertEmptyValues: false,
   removeUndefinedValues: true,
   convertClassInstanceToMap: true,
 };
+console.debug(`DynamoService::marshallOptions::${JSON.stringify(marshallOptions)}`);
 const unmarshallOptions = {
   wrapNumbers: false,
 };
+console.debug(`DynamoService::unmarshallOptions::${JSON.stringify(unmarshallOptions)}`);
 const translateConfig: TranslateConfig = { marshallOptions, unmarshallOptions };
 
+console.debug('DynamoService::creating new DynamoDBDocumentClient');
 /**
  * Create a DynamoDBDocumentClient. This will be created once during AWS Lambda function
  * cold start and placed in the module loader. It will be reused across function invocations.
