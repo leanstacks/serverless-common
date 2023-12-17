@@ -127,3 +127,145 @@ export const handle = middyfyAPIGateway({ handler, eventSchema });
 When an `eventSchema` is present in the middleware options, the Joi Validator middleware ensures that the event is valid. The middleware throws a ValidationError if it is invalid. The HTTP Error Handler knows how to handle a ValidationError, returning a response with status code 400 and an informative message.
 
 Notice that nothing changed with the handler function itself!
+
+## Creating a Scheduled event handler
+
+Use a Scheduled event handler when you need to run a Lambda function on a cron schedule.
+
+To create a Scheduled event handler, you will need to create two modules: the handler function and the middyfy wrapper.
+
+Create the AWS Lambda Handler function with the usual signature...
+
+_/handlers/task-scheduled/handler.ts_
+
+```ts
+import { Context, ScheduledEvent } from 'aws-lambda';
+...
+
+export const handler = async (event: ScheduledEvent, context: Context): Promise<void> => {
+  try {
+    // perform business logic
+    await TaskService.sendReminders();
+
+  } catch (error) {
+    console.error('Failed to send task reminders. Detail:', error);
+    throw new ServiceError(error);
+  }
+};
+```
+
+Next, we need to _"middyfy"_ the handler function. This is just a fancy way of saying we are wrapping the handler function with middleware.
+
+_/handlers/task-scheduled/index.ts_
+
+```ts
+import { middyfyScheduled } from '@leanstacks/serverless-common';
+
+import { handler } from './handler';
+
+export const handle = middyfyScheduled({ handler, logger: console.log });
+```
+
+## Creating a SNS event handler
+
+Use a SNS event handler to process events from an AWS Simple Notification Service (SNS) topic.
+
+To create a SNS event handler, you will need to create two modules: the handler function and the middyfy wrapper.
+
+Create the AWS Lambda Handler function with the usual signature...
+
+_/handlers/task-sns/handler.ts_
+
+```ts
+import { Context, SNSEvent } from 'aws-lambda';
+...
+
+export const handler = async (event: SNSEvent, context: Context): Promise<void> => {
+  try {
+    // perform business logic
+    const promises = map(event.Records, (record) => {
+      const taskToCreate = record.Sns.Message as Task;
+      return TaskService.create(taskToCreate);
+    });
+    const tasks:Task[] = await Promise.all(promises);
+
+  } catch (error) {
+    console.error('Failed to create tasks. Detail:', error);
+    throw new ServiceError(error);
+  }
+};
+```
+
+Next, we need to _"middyfy"_ the handler function. This is just a fancy way of saying we are wrapping the handler function with middleware.
+
+_/handlers/task-sns/index.ts_
+
+```ts
+import { middyfySNS } from '@leanstacks/serverless-common';
+
+import { handler } from './handler';
+
+export const handle = middyfySNS({ handler, logger: console.log });
+```
+
+The handler is wrapped with two middlewares.
+
+1. The `event-normalizer` middleware performs a JSON parse on the `Message`.
+2. The `validator` middleware will validate the event when an `eventSchema` is provided in the options.
+
+## Creating a SQS event handler
+
+Use a SQS event handler to process events from an AWS Simple Queue Service (SQS) topic.
+
+To create a SQS event handler, you will need to create two modules: the handler function and the middyfy wrapper. You may optionally create a `schema.ts` module which provides a Joi validation schema for the `SQSEvent`.
+
+Create the AWS Lambda Handler function with the usual signature...
+
+_/handlers/task-sqs/handler.ts_
+
+```ts
+import { Context, SQSEvent, SQSBatchResponse } from 'aws-lambda';
+...
+
+export const handler = async (event: SNSEvent, context: Context): Promise<SQSBatchResponse | void> => {
+  try {
+    // perform business logic
+    const promises = map(event.Records, (record) => {
+      const taskToCreate = record.body as Task;
+      return TaskService.create(taskToCreate);
+    });
+
+    const response:SQSBatchResponse = {};
+    Promise.allSettled(promises)
+      .then((values) =>  {
+        response.batchItemFailures = map(values, (value) => {
+          if (value.status === 'rejected') {
+            return { itemIdentifier: value.reason }
+          }
+        })
+      });
+
+    return response;
+  } catch (error) {
+    console.error('Failed to create tasks. Detail:', error);
+    throw new ServiceError(error);
+  }
+};
+```
+
+Next, we need to _"middyfy"_ the handler function. This is just a fancy way of saying we are wrapping the handler function with middleware.
+
+_/handlers/task-sqs/index.ts_
+
+```ts
+import { middyfySQS } from '@leanstacks/serverless-common';
+
+import { handler } from './handler';
+
+export const handle = middyfySQS({ handler, logger: console.log });
+```
+
+The handler is wrapped with two middlewares.
+
+1. The `event-normalizer` middleware performs a JSON parse on the `body`.
+2. The `validator` middleware will validate the event when an `eventSchema` is provided in the options.

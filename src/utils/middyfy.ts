@@ -1,12 +1,14 @@
 import middy from '@middy/core';
+import eventNormalizer from '@middy/event-normalizer';
 import httpEventNormalizer from '@middy/http-event-normalizer';
 import jsonBodyParser from '@middy/http-json-body-parser';
 import {
   APIGatewayProxyEvent,
   APIGatewayProxyResult,
   Context,
-  SNSEvent,
   ScheduledEvent,
+  SQSHandler,
+  SNSHandler,
 } from 'aws-lambda';
 import { ObjectSchema } from 'joi';
 
@@ -26,11 +28,6 @@ export type APIGatewayHandlerFn = (
  * (e.g. cron events from AWS EventBridge).
  */
 export type ScheduledHandlerFn = (event: ScheduledEvent, context: Context) => Promise<void>;
-
-/**
- * The AWS Lambda handler function signature for SNS events.
- */
-export type SNSHandlerFn = (event: SNSEvent, Context: Context) => Promise<void>;
 
 /**
  * Base options for `middyfy` functions.
@@ -59,7 +56,14 @@ export type ScheduledMiddyfyOptions = MiddyfyOptions<ScheduledHandlerFn> & {
 /**
  * Options for middyfied SNS event handler functions.
  */
-export type SNSMiddyfyOptions = MiddyfyOptions<SNSHandlerFn> & {
+export type SNSMiddyfyOptions = MiddyfyOptions<SNSHandler> & {
+  eventSchema?: ObjectSchema;
+};
+
+/**
+ * Options for middyfied SQS event handler functions.
+ */
+export type SQSMiddyfyOptions = MiddyfyOptions<SQSHandler> & {
   eventSchema?: ObjectSchema;
 };
 
@@ -102,7 +106,19 @@ export const middyfyScheduled = (options: ScheduledMiddyfyOptions) => {
  * @returns A middyfied handler function.
  */
 export const middyfySNS = (options: SNSMiddyfyOptions) => {
-  return middy(options.handler).use(
-    validator({ eventSchema: options.eventSchema, logger: options.logger }),
-  );
+  return middy(options.handler)
+    .use(eventNormalizer())
+    .use(validator({ eventSchema: options.eventSchema, logger: options.logger }));
+};
+
+/**
+ * Wraps a SQS event handler function in middleware, returning the AWS Lambda
+ * handler function.
+ * @param options - The `SQSMiddyfyOptions` object.
+ * @returns A middyfied handler function.
+ */
+export const middyfySQS = (options: SQSMiddyfyOptions) => {
+  return middy(options.handler)
+    .use(eventNormalizer())
+    .use(validator({ eventSchema: options.eventSchema, logger: options.logger }));
 };

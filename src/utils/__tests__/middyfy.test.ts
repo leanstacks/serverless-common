@@ -3,10 +3,12 @@ import {
   APIGatewayProxyResult,
   Context,
   SNSEvent,
+  SQSBatchResponse,
+  SQSEvent,
   ScheduledEvent,
 } from 'aws-lambda';
 
-import { middyfyAPIGateway, middyfySNS, middyfyScheduled } from '../middyfy';
+import { middyfyAPIGateway, middyfySNS, middyfySQS, middyfyScheduled } from '../middyfy';
 
 describe('middyfyAPIGateway', () => {
   const handlerFn = async (
@@ -38,6 +40,20 @@ describe('middyfySNS', () => {
 
   it('should middyfySNS', () => {
     const handler = middyfySNS({ handler: handlerFn });
+
+    expect(handler).toBeDefined();
+  });
+});
+
+describe('middyfySQS', () => {
+  const handlerFn = async (event: SQSEvent, context: Context): Promise<SQSBatchResponse> => {
+    return {
+      batchItemFailures: [{ itemIdentifier: 'messageId' }],
+    };
+  };
+
+  it('should middyfySQS', () => {
+    const handler = middyfySQS({ handler: handlerFn });
 
     expect(handler).toBeDefined();
   });
