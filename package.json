@@ -28,8 +28,9 @@
   },
   "homepage": "https://github.com/leanstacks/serverless-common#readme",
   "devDependencies": {
-    "@aws-sdk/client-dynamodb": "^3.454.0",
-    "@aws-sdk/lib-dynamodb": "^3.454.0",
+    "@aws-sdk/client-dynamodb": "^3.474.0",
+    "@aws-sdk/client-sqs": "^3.474.0",
+    "@aws-sdk/lib-dynamodb": "^3.474.0",
     "@middy/core": "^4.7.0",
     "@middy/event-normalizer": "^4.7.0",
     "@middy/http-event-normalizer": "^4.7.0",
@@ -59,8 +60,9 @@
     "typescript": "^5.2.2"
   },
   "peerDependencies": {
-    "@aws-sdk/client-dynamodb": "^3.454.0",
-    "@aws-sdk/lib-dynamodb": "^3.454.0",
+    "@aws-sdk/client-dynamodb": "^3.474.0",
+    "@aws-sdk/client-sqs": "^3.474.0",
+    "@aws-sdk/lib-dynamodb": "^3.474.0",
     "@middy/core": "^4.7.0",
     "@middy/event-normalizer": "^4.7.0",
     "@middy/http-event-normalizer": "^4.7.0",
