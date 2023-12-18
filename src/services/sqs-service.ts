@@ -6,7 +6,7 @@ import {
   SendMessageCommandOutput,
 } from '@aws-sdk/client-sqs';
 
-import { lambdaConfigValues as config } from './config.service';
+import { baseConfigValues as config } from './config.service';
 
 const clientConfig: SQSClientConfig = {
   region: config.AWS_LAMBDA_FUNCTION_VERSION,

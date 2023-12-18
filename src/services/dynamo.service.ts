@@ -25,7 +25,7 @@ import {
 } from '@aws-sdk/lib-dynamodb';
 import { DynamoDBClient, DynamoDBClientConfig } from '@aws-sdk/client-dynamodb';
 
-import { lambdaConfigValues as config } from './config.service';
+import { baseConfigValues as config } from './config.service';
 
 const dynamoDbClientConfig: DynamoDBClientConfig = {
   region: config.AWS_REGION,

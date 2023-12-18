@@ -12,7 +12,7 @@ import {
   ListUsersCommandOutput,
 } from '@aws-sdk/client-cognito-identity-provider';
 
-import { lambdaConfigValues as config } from './config.service';
+import { baseConfigValues as config } from './config.service';
 
 const clientConfig: CognitoIdentityProviderClientConfig = {
   region: config.AWS_REGION,

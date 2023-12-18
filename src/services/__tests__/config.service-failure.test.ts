@@ -1,5 +1,5 @@
 import { ServiceError } from '../../errors/service.error';
-import { LambdaConfig, lambdaConfigSchema, validateConfig } from '../config.service';
+import ConfigService, { BaseConfig, baseConfigSchema } from '../config.service';
 
 describe('ConfigService Failure', () => {
   const originalEnv = process.env;
@@ -15,6 +15,6 @@ describe('ConfigService Failure', () => {
   });
 
   it('should throw error when validation fails', () => {
-    expect(() => validateConfig<LambdaConfig>(lambdaConfigSchema)).toThrow(ServiceError);
+    expect(() => ConfigService.validateConfig<BaseConfig>(baseConfigSchema)).toThrow(ServiceError);
   });
 });

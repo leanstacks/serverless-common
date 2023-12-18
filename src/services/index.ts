@@ -1,9 +1,5 @@
-export {
-  LambdaConfig,
-  lambdaConfigSchema,
-  lambdaConfigValues,
-  validateConfig,
-} from './config.service';
+export { BaseConfig, baseConfigSchema, baseConfigValues } from './config.service';
+export { default as ConfigService } from './config.service';
 
 export { default as DynamoService } from './dynamo.service';
 
