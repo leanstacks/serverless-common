@@ -5,7 +5,7 @@ export const sendMessageCommandInput: SendMessageCommandInput = {
   MessageBody: 'message-body',
 };
 
-export const sendMessageCommandOuput: SendMessageCommandOutput = {
+export const sendMessageCommandOutput: SendMessageCommandOutput = {
   $metadata: {},
   MessageId: 'message-id',
 };
