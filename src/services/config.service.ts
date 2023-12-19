@@ -21,7 +21,8 @@ export type BaseConfig = {
   AWS_LAMBDA_FUNCTION_MEMORY_SIZE: string;
   AWS_LAMBDA_FUNCTION_VERSION: string;
   AWS_REGION: string;
-  LOG_LEVEL: string;
+  LOGGING_ENABLED: boolean;
+  LOGGING_LEVEL: string;
 };
 
 /**
@@ -53,7 +54,8 @@ export const baseConfigSchema = Joi.object({
   AWS_LAMBDA_FUNCTION_MEMORY_SIZE: Joi.string().required(),
   AWS_LAMBDA_FUNCTION_VERSION: Joi.string().required(),
   AWS_REGION: Joi.string().required(),
-  LOG_LEVEL: Joi.string().allow('debug', 'info', 'warn', 'error').default('info'),
+  LOGGING_ENABLED: Joi.boolean().default(true),
+  LOGGING_LEVEL: Joi.string().allow('debug', 'info', 'warn', 'error').default('info'),
 });
 
 /**
