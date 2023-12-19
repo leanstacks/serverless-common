@@ -1,20 +1,20 @@
-import winston, { LoggerOptions } from 'winston';
+import { createLogger, format, LoggerOptions, transports } from 'winston';
 
 import { baseConfigValues as config } from '../services';
 
+const { printf } = format;
+
+const messageFormat = printf(({ level, message }) => {
+  return `${level}::${message}`;
+});
+
 const loggerOptions: LoggerOptions = {
+  format: messageFormat,
   level: config.LOG_LEVEL,
-  transports: [new winston.transports.Console()],
+  transports: [new transports.Console()],
 };
 
-const _logger = winston.createLogger(loggerOptions);
-_logger.info('test message');
+const _logger = createLogger(loggerOptions);
+_logger.debug('Logger::creating new Logger');
 
-const Logger = {
-  debug: _logger.debug,
-  info: _logger.info,
-  warn: _logger.warn,
-  error: _logger.error,
-};
-
-export default Logger;
+export default _logger;
