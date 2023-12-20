@@ -1,6 +1,6 @@
 import { createLogger, format, LoggerOptions, transports } from 'winston';
 
-import { baseConfigValues as config } from '../services';
+import { baseConfigValues as config } from '../services/config.service';
 
 const { combine, json, timestamp } = format;
 
@@ -11,7 +11,7 @@ const loggerOptions: LoggerOptions = {
   transports: [new transports.Console()],
 };
 
-const logger = createLogger(loggerOptions);
-logger.debug('Logger::creating new Logger');
+const Logger = createLogger(loggerOptions);
+Logger.debug('Logger::creating new Logger');
 
-export default logger;
+export default Logger;
