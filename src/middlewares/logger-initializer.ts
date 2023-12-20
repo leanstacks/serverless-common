@@ -1,6 +1,6 @@
 import middy, { MiddlewareObj } from '@middy/core';
 
-import Logger from '../utils/logging';
+import Logger from '../utils/logger';
 
 /**
  * Initialize the Logger. Adds event metadata to each logged event.

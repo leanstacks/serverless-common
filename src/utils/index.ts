@@ -19,4 +19,4 @@ export {
 
 export { default as ID } from './id';
 
-export { default as Logger } from './logging';
+export { default as Logger } from './logger';

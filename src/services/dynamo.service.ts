@@ -26,7 +26,7 @@ import {
 import { DynamoDBClient, DynamoDBClientConfig } from '@aws-sdk/client-dynamodb';
 
 import { baseConfigValues as config } from './config.service';
-import Logger from '../utils/logging';
+import Logger from '../utils/logger';
 
 const dynamoDbClientConfig: DynamoDBClientConfig = {
   region: config.AWS_REGION,

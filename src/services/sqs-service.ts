@@ -7,7 +7,7 @@ import {
 } from '@aws-sdk/client-sqs';
 
 import { baseConfigValues as config } from './config.service';
-import Logger from '../utils/logging';
+import Logger from '../utils/logger';
 
 const clientConfig: SQSClientConfig = {
   region: config.AWS_LAMBDA_FUNCTION_VERSION,
