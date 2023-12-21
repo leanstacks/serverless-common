@@ -161,11 +161,11 @@ Next, we need to _"middyfy"_ the handler function. This is just a fancy way of s
 _/handlers/task-scheduled/index.ts_
 
 ```ts
-import { Logger, middyfyScheduled } from '@leanstacks/serverless-common';
+import { middyfyScheduled } from '@leanstacks/serverless-common';
 
 import { handler } from './handler';
 
-export const handle = middyfyScheduled({ handler, logger: Logger });
+export const handle = middyfyScheduled({ handler });
 ```
 
 ## Creating a SNS event handler
@@ -203,11 +203,11 @@ Next, we need to _"middyfy"_ the handler function. This is just a fancy way of s
 _/handlers/task-sns/index.ts_
 
 ```ts
-import { Logger, middyfySNS } from '@leanstacks/serverless-common';
+import { middyfySNS } from '@leanstacks/serverless-common';
 
 import { handler } from './handler';
 
-export const handle = middyfySNS({ handler, logger: Logger });
+export const handle = middyfySNS({ handler });
 ```
 
 The handler is wrapped with two middlewares.
@@ -262,11 +262,11 @@ Next, we need to _"middyfy"_ the handler function. This is just a fancy way of s
 _/handlers/task-sqs/index.ts_
 
 ```ts
-import { Logger, middyfySQS } from '@leanstacks/serverless-common';
+import { middyfySQS } from '@leanstacks/serverless-common';
 
 import { handler } from './handler';
 
-export const handle = middyfySQS({ handler, logger: Logger });
+export const handle = middyfySQS({ handler });
 ```
 
 The handler is wrapped with two middlewares.
@@ -339,11 +339,11 @@ Next, we need to _"middyfy"_ the handler function. This is just a fancy way of s
 _/handlers/task-lambda/index.ts_
 
 ```ts
-import { Logger, middyfyLambda } from '@leanstacks/serverless-common';
+import { middyfyLambda } from '@leanstacks/serverless-common';
 
 import { handler } from './handler';
 
-export const handle = middyfyLambda({ handler, logger: Logger });
+export const handle = middyfyLambda({ handler });
 ```
 
 The handler is wrapped with one middleware.
