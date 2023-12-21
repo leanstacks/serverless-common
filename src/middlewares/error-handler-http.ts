@@ -1,8 +1,9 @@
 import middy, { MiddlewareObj } from '@middy/core';
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 
-import { ServiceError } from '../errors/service.error';
+import Logger from '../utils/logger';
 import { HttpError } from '../errors/http.error';
+import { ServiceError } from '../errors/service.error';
 
 /**
  * `HttpErrorHandlerOptions` provide configuration to the `http-error-handler`
@@ -11,7 +12,6 @@ import { HttpError } from '../errors/http.error';
 export type HttpErrorHandlerOptions = {
   defaultMessage?: string;
   defaultStatusCode?: number;
-  logger?(message: string): void;
 };
 
 const DEFAULT_MESSAGE = 'Unhandled error';
@@ -36,16 +36,6 @@ export const httpErrorHandler = (
   const options: HttpErrorHandlerOptions = {
     ...DEFAULT_OPTIONS,
     ...opts,
-  };
-
-  /**
-   * Write a message to the application log.
-   * @param message string - The message to write.
-   */
-  const log = (message: string): void => {
-    if (options.logger) {
-      options.logger(message);
-    }
   };
 
   /**
@@ -87,7 +77,7 @@ export const httpErrorHandler = (
 
     if (isHttpError(error)) {
       // type HttpError
-      log(`middleware::error-handler::HttpError ${error}`);
+      Logger.error(`middleware::http-error-handler::HttpError::${error}`, error);
       request.response = {
         statusCode: error.statusCode ?? options.defaultStatusCode,
         body: JSON.stringify({
@@ -99,7 +89,7 @@ export const httpErrorHandler = (
       };
     } else if (isServiceError(error)) {
       // type ServiceError
-      log(`middleware::error-handler::ServiceError ${error}`);
+      Logger.error(`middleware::http-error-handler::ServiceError::${error}`, error);
       request.response = {
         statusCode: error.statusCode ?? options.defaultStatusCode,
         body: JSON.stringify({
@@ -111,7 +101,7 @@ export const httpErrorHandler = (
       };
     } else {
       // any other type of Error
-      log(`middleware::error-handler::Error ${error}`);
+      Logger.error(`middleware::http-error-handler::Error::${error}`, error);
       request.response = {
         statusCode: options.defaultStatusCode ?? DEFAULT_STATUS_CODE,
         body: JSON.stringify({

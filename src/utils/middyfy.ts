@@ -60,7 +60,6 @@ export type LambdaHandler<TEvent = unknown, TResult = unknown> = (
  */
 export type MiddyfyOptions<THandler> = {
   handler: THandler;
-  logger?: (message: string) => void;
 };
 
 /**
@@ -113,12 +112,11 @@ export const middyfyAPIGateway = (options: APIGatewayMiddyfyOptions) => {
     .use(loggerInitializer())
     .use(httpEventNormalizer())
     .use(jsonBodyParser())
-    .use(validator({ eventSchema: options.eventSchema, logger: options.logger }))
+    .use(validator({ eventSchema: options.eventSchema }))
     .use(
       httpErrorHandler({
         defaultMessage: options.defaultErrorMessage,
         defaultStatusCode: options.defaultErrorStatusCode,
-        logger: options.logger,
       }),
     );
 };
@@ -132,7 +130,7 @@ export const middyfyAPIGateway = (options: APIGatewayMiddyfyOptions) => {
 export const middyfyScheduled = (options: ScheduledMiddyfyOptions) => {
   return middy(options.handler)
     .use(loggerInitializer())
-    .use(validator({ eventSchema: options.eventSchema, logger: options.logger }));
+    .use(validator({ eventSchema: options.eventSchema }));
 };
 
 /**
@@ -145,7 +143,7 @@ export const middyfySNS = (options: SNSMiddyfyOptions) => {
   return middy(options.handler)
     .use(loggerInitializer())
     .use(eventNormalizer())
-    .use(validator({ eventSchema: options.eventSchema, logger: options.logger }));
+    .use(validator({ eventSchema: options.eventSchema }));
 };
 
 /**
@@ -158,7 +156,7 @@ export const middyfySQS = (options: SQSMiddyfyOptions) => {
   return middy(options.handler)
     .use(loggerInitializer())
     .use(eventNormalizer())
-    .use(validator({ eventSchema: options.eventSchema, logger: options.logger }));
+    .use(validator({ eventSchema: options.eventSchema }));
 };
 
 /**
@@ -173,5 +171,5 @@ export const middyfySQS = (options: SQSMiddyfyOptions) => {
 export const middyfyLambda = <TEvent, TResult>(options: LambdaMiddyfyOptions<TEvent, TResult>) => {
   return middy(options.handler)
     .use(loggerInitializer())
-    .use(validator({ eventSchema: options.eventSchema, logger: options.logger }));
+    .use(validator({ eventSchema: options.eventSchema }));
 };

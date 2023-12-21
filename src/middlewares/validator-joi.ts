@@ -1,13 +1,14 @@
 import middy, { MiddlewareObj } from '@middy/core';
 import * as Joi from 'joi';
-import { BadRequestError } from '../errors';
+
+import Logger from '../utils/logger';
+import { BadRequestError } from '../errors/bad-request.error';
 
 /**
  * ValidatorOptions
  */
 export type ValidatorOptions = {
   eventSchema?: Joi.ObjectSchema;
-  logger?(message: string): void;
 };
 
 /**
@@ -25,16 +26,6 @@ const validationOptions: Joi.ValidationOptions = {
  */
 export const validator = (options: ValidatorOptions): MiddlewareObj => {
   /**
-   * Write a message to the application log.
-   * @param message string - The message to write.
-   */
-  const log = (message: string): void => {
-    if (options.logger) {
-      options.logger(message);
-    }
-  };
-
-  /**
    * Validate a `value` using a Joi `schema`.
    * @param schema - Joi schema
    * @param value - The value to be validated
@@ -50,11 +41,11 @@ export const validator = (options: ValidatorOptions): MiddlewareObj => {
    * @param request - Middy request context.
    */
   const before: middy.MiddlewareFn = (request): void => {
-    log(`middleware::validator::before`);
+    Logger.debug(`middleware::validator::before`);
     if (options.eventSchema) {
       const { error, value } = validate(options.eventSchema, request.event);
       if (error) {
-        log(`validation error::${error}`);
+        Logger.error(`middleware::validator::error::${error}`);
         throw new BadRequestError(error.message);
       }
       request.event = {
