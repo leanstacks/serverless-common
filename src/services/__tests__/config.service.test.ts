@@ -1,14 +1,14 @@
-import { LambdaConfig, lambdaConfigSchema, validateConfig } from '../config.service';
+import ConfigService, { BaseConfig, baseConfigSchema } from '../config.service';
 
 describe('ConfigService', () => {
   it('should validate successfully', () => {
-    const validatedConfig = validateConfig<LambdaConfig>(lambdaConfigSchema);
+    const validatedConfig = ConfigService.validateConfig<BaseConfig>(baseConfigSchema);
 
     expect(validatedConfig).toBeDefined();
   });
 
   it('should return LambdaConfig attributes', () => {
-    const validatedConfig = validateConfig<LambdaConfig>(lambdaConfigSchema);
+    const validatedConfig = ConfigService.validateConfig<BaseConfig>(baseConfigSchema);
 
     expect(validatedConfig).toBeDefined();
     expect(validatedConfig.AWS_EXECUTION_ENV).toBe('aws-execution-env');

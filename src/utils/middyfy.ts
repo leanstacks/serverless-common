@@ -12,6 +12,7 @@ import {
 } from 'aws-lambda';
 import { ObjectSchema } from 'joi';
 
+import { loggerInitializer } from '../middlewares/logger-initializer';
 import { validator } from '../middlewares/validator-joi';
 import { httpErrorHandler } from '../middlewares/error-handler-http';
 
@@ -59,7 +60,6 @@ export type LambdaHandler<TEvent = unknown, TResult = unknown> = (
  */
 export type MiddyfyOptions<THandler> = {
   handler: THandler;
-  logger?: (message: string) => void;
 };
 
 /**
@@ -109,14 +109,14 @@ export type LambdaMiddyfyOptions<TEvent = unknown, TResult = unknown> = MiddyfyO
  */
 export const middyfyAPIGateway = (options: APIGatewayMiddyfyOptions) => {
   return middy(options.handler)
+    .use(loggerInitializer())
     .use(httpEventNormalizer())
     .use(jsonBodyParser())
-    .use(validator({ eventSchema: options.eventSchema, logger: options.logger }))
+    .use(validator({ eventSchema: options.eventSchema }))
     .use(
       httpErrorHandler({
         defaultMessage: options.defaultErrorMessage,
         defaultStatusCode: options.defaultErrorStatusCode,
-        logger: options.logger,
       }),
     );
 };
@@ -128,9 +128,9 @@ export const middyfyAPIGateway = (options: APIGatewayMiddyfyOptions) => {
  * @returns A middyfied handler function.
  */
 export const middyfyScheduled = (options: ScheduledMiddyfyOptions) => {
-  return middy(options.handler).use(
-    validator({ eventSchema: options.eventSchema, logger: options.logger }),
-  );
+  return middy(options.handler)
+    .use(loggerInitializer())
+    .use(validator({ eventSchema: options.eventSchema }));
 };
 
 /**
@@ -141,8 +141,9 @@ export const middyfyScheduled = (options: ScheduledMiddyfyOptions) => {
  */
 export const middyfySNS = (options: SNSMiddyfyOptions) => {
   return middy(options.handler)
+    .use(loggerInitializer())
     .use(eventNormalizer())
-    .use(validator({ eventSchema: options.eventSchema, logger: options.logger }));
+    .use(validator({ eventSchema: options.eventSchema }));
 };
 
 /**
@@ -153,8 +154,9 @@ export const middyfySNS = (options: SNSMiddyfyOptions) => {
  */
 export const middyfySQS = (options: SQSMiddyfyOptions) => {
   return middy(options.handler)
+    .use(loggerInitializer())
     .use(eventNormalizer())
-    .use(validator({ eventSchema: options.eventSchema, logger: options.logger }));
+    .use(validator({ eventSchema: options.eventSchema }));
 };
 
 /**
@@ -167,7 +169,7 @@ export const middyfySQS = (options: SQSMiddyfyOptions) => {
  * @see {@link https://docs.aws.amazon.com/lambda/latest/operatorguide/functions-calling-functions.html}
  */
 export const middyfyLambda = <TEvent, TResult>(options: LambdaMiddyfyOptions<TEvent, TResult>) => {
-  return middy(options.handler).use(
-    validator({ eventSchema: options.eventSchema, logger: options.logger }),
-  );
+  return middy(options.handler)
+    .use(loggerInitializer())
+    .use(validator({ eventSchema: options.eventSchema }));
 };

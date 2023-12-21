@@ -81,13 +81,15 @@ export const handle = middyfyAPIGateway({ handler });
 
 The handler function appears much the same as what you may be writing already. So what is advantage? The magic happens in the `middyfyAPIGateway` function. This simple function wraps the handler in several middlewares.
 
-First, the [`http-event-normalizer`](https://middy.js.org/docs/middlewares/http-event-normalizer) official Middy middleware ensures that all of the optional elements of an APIGatewayProxyEvent are defined even when empty.
+The `logger-initializer` middleware adds AWS Lambda Context metadata to the logger so that all messages may be correlated to a specific Lambda function invocation.
 
-Next, the [`http-json-body-parser`](https://middy.js.org/docs/middlewares/http-json-body-parser) official Middy middleware parses the HTTP request body converting it from a string of JSON into an object.
+The [`http-event-normalizer`](https://middy.js.org/docs/middlewares/http-event-normalizer) official Middy middleware ensures that all of the optional elements of an APIGatewayProxyEvent are defined even when empty.
 
-Then, the `validator-joi` middleware validates the APIGatewayProxyEvent with a Joi schema, when a schema is provided in the middleware options.
+The [`http-json-body-parser`](https://middy.js.org/docs/middlewares/http-json-body-parser) official Middy middleware parses the HTTP request body converting it from a string of JSON into an object.
 
-Finally, the `http-error-handler` middleware processes errors thrown from the handler function, creating a standardized response based upon the error type.
+The `validator-joi` middleware validates the APIGatewayProxyEvent with a Joi schema, when a schema is provided in the middleware options.
+
+The `http-error-handler` middleware processes errors thrown from the handler function, creating a standardized response based upon the error type.
 
 ## Creating an API Gateway handler with event validation
 
@@ -148,7 +150,7 @@ export const handler = async (event: ScheduledEvent, context: Context): Promise<
     await TaskService.sendReminders();
 
   } catch (error) {
-    console.error('Failed to send task reminders. Detail:', error);
+    Logger.error('Failed to send task reminders. Detail:', error);
     throw new ServiceError(error);
   }
 };
@@ -163,7 +165,7 @@ import { middyfyScheduled } from '@leanstacks/serverless-common';
 
 import { handler } from './handler';
 
-export const handle = middyfyScheduled({ handler, logger: console.log });
+export const handle = middyfyScheduled({ handler });
 ```
 
 ## Creating a SNS event handler
@@ -190,7 +192,7 @@ export const handler = async (event: SNSEvent, context: Context): Promise<void> 
     const tasks:Task[] = await Promise.all(promises);
 
   } catch (error) {
-    console.error('Failed to create tasks. Detail:', error);
+    Logger.error('Failed to create tasks. Detail:', error);
     throw new ServiceError(error);
   }
 };
@@ -205,13 +207,15 @@ import { middyfySNS } from '@leanstacks/serverless-common';
 
 import { handler } from './handler';
 
-export const handle = middyfySNS({ handler, logger: console.log });
+export const handle = middyfySNS({ handler });
 ```
 
 The handler is wrapped with two middlewares.
 
+1. The `logger-initializer` middleware adds AWS Lambda Context metadata to the logger so that all messages may be correlated to a specific Lambda function invocation.
+
 1. The `event-normalizer` middleware performs a JSON parse on the `Message`.
-2. The `validator` middleware will validate the event when an `eventSchema` is provided in the options.
+1. The `validator` middleware will validate the event when an `eventSchema` is provided in the options.
 
 ## Creating a SQS event handler
 
@@ -247,7 +251,7 @@ export const handler = async (event: SNSEvent, context: Context): Promise<SQSBat
 
     return response;
   } catch (error) {
-    console.error('Failed to create tasks. Detail:', error);
+    Logger.error('Failed to create tasks. Detail:', error);
     throw new ServiceError(error);
   }
 };
@@ -262,13 +266,14 @@ import { middyfySQS } from '@leanstacks/serverless-common';
 
 import { handler } from './handler';
 
-export const handle = middyfySQS({ handler, logger: console.log });
+export const handle = middyfySQS({ handler });
 ```
 
 The handler is wrapped with two middlewares.
 
+1. The `logger-initializer` middleware adds AWS Lambda Context metadata to the logger so that all messages may be correlated to a specific Lambda function invocation.
 1. The `event-normalizer` middleware performs a JSON parse on the `body`.
-2. The `validator` middleware will validate the event when an `eventSchema` is provided in the options.
+1. The `validator` middleware will validate the event when an `eventSchema` is provided in the options.
 
 ## Creating a Lambda event handler
 
@@ -319,7 +324,7 @@ export const handler = async (
       };
     }
   } catch (error) {
-    console.warn(`Failed to find Task. Detail: ${error}`);
+    Logger.warn(`Failed to find Task. Detail: ${error}`);
     return {
       status: 500,
       statusText: `${error}`,
@@ -338,9 +343,10 @@ import { middyfyLambda } from '@leanstacks/serverless-common';
 
 import { handler } from './handler';
 
-export const handle = middyfyLambda({ handler, logger: console.log });
+export const handle = middyfyLambda({ handler });
 ```
 
 The handler is wrapped with one middleware.
 
+1. The `logger-initializer` middleware adds AWS Lambda Context metadata to the logger so that all messages may be correlated to a specific Lambda function invocation.
 1. The `validator` middleware will validate the event when an `eventSchema` is provided in the options.

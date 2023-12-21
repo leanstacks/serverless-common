@@ -3,24 +3,26 @@ import * as Joi from 'joi';
 import { ServiceError } from '../errors/service.error';
 
 /**
- * The `LambdaConfig` type describes the configuration values supplied to every AWS Lambda
- * function by default. Extend `LambdaConfig` with your own service-specific configuration
+ * The `BaseConfig` type describes the configuration values supplied to every AWS Lambda
+ * function by default. Extend `BaseConfig` with your own service-specific configuration
  * type.
  *
  * Example:
  * ```
- * type ServiceConfig = LambdaConfig & {
+ * type ServiceConfig = BaseConfig & {
  *   FOO: string;
  *   BAR: number;
  * }
  * ```
  */
-export type LambdaConfig = {
+export type BaseConfig = {
   AWS_EXECUTION_ENV: string;
   AWS_LAMBDA_FUNCTION_NAME: string;
   AWS_LAMBDA_FUNCTION_MEMORY_SIZE: string;
   AWS_LAMBDA_FUNCTION_VERSION: string;
   AWS_REGION: string;
+  LOGGING_ENABLED: boolean;
+  LOGGING_LEVEL: string;
 };
 
 /**
@@ -31,7 +33,7 @@ export type LambdaConfig = {
  * otherwise throws a `ServiceError`.
  * @throws Throws a `ServiceError` when validation is unsuccessful.
  */
-export function validateConfig<TConfig>(schema: Joi.ObjectSchema<TConfig>): TConfig {
+function validateConfig<TConfig>(schema: Joi.ObjectSchema<TConfig>): TConfig {
   const { error, value } = schema.validate(process.env, {
     abortEarly: false,
     allowUnknown: true,
@@ -46,17 +48,25 @@ export function validateConfig<TConfig>(schema: Joi.ObjectSchema<TConfig>): TCon
 /**
  * A Joi ObjectSchema to validate the base AWS Lambda function configuration values.
  */
-export const lambdaConfigSchema = Joi.object({
+export const baseConfigSchema = Joi.object({
   AWS_EXECUTION_ENV: Joi.string().required(),
   AWS_LAMBDA_FUNCTION_NAME: Joi.string().required(),
   AWS_LAMBDA_FUNCTION_MEMORY_SIZE: Joi.string().required(),
   AWS_LAMBDA_FUNCTION_VERSION: Joi.string().required(),
   AWS_REGION: Joi.string().required(),
+  LOGGING_ENABLED: Joi.boolean().default(true),
+  LOGGING_LEVEL: Joi.string().allow('debug', 'info', 'warn', 'error').default('info'),
 });
 
 /**
- * A `LambdaConfig` object containing the base AWS Lambda function configuration values.
+ * A `BaseConfig` object containing the base AWS Lambda function configuration values.
  * This is useful when your function does not have additional configuration attributes.
- * @see {@link LambdaConfig}
+ * @see {@link BaseConfig}
  */
-export const lambdaConfigValues = validateConfig<LambdaConfig>(lambdaConfigSchema);
+export const baseConfigValues = validateConfig<BaseConfig>(baseConfigSchema);
+
+const ConfigService = {
+  validateConfig,
+};
+
+export default ConfigService;

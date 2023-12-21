@@ -1,5 +1,4 @@
 import { Request } from '@middy/core';
-import { jest } from '@jest/globals';
 
 import { HttpError, ServiceError } from '../../errors';
 
@@ -44,28 +43,6 @@ describe('HttpErrorHandler', () => {
     middleware.onError?.(request);
 
     expect(request.response).not.toBeDefined();
-  });
-
-  it('should write log when logger provided', () => {
-    type loggerFn = (msg: string) => void;
-    const mockLogger = jest.fn<loggerFn>();
-    const request: Request = {
-      ...requestFixture,
-      error: new HttpError('message', 404),
-    };
-    delete request.response;
-
-    const middleware = httpErrorHandler({
-      defaultMessage: 'message',
-      defaultStatusCode: 500,
-      logger: mockLogger,
-    });
-
-    expect(middleware.onError).toBeDefined();
-
-    middleware.onError?.(request);
-
-    expect(mockLogger).toHaveBeenCalled();
   });
 
   it('should handle HttpError', () => {
