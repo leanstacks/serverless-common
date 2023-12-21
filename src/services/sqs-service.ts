@@ -13,7 +13,6 @@ const clientConfig: SQSClientConfig = {
   region: config.AWS_LAMBDA_FUNCTION_VERSION,
 };
 
-console.log(`Logger::${Logger}`);
 Logger.debug('SQSService::creating new SQSClient', { data: { clientConfig } });
 const sqsClient = new SQSClient(clientConfig);
 
