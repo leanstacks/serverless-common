@@ -38,7 +38,8 @@ async send(task: Task): Promise<void> {
     QueueUrl: config.TASK_QUEUE_URL,
     MessageBody: JSON.stringify(task);
   });
-  console.log(`sent message ${output.MessageId} to queue`);
+
+  Logger.debug(`sent message ${output.MessageId} to queue`);
 }
 ```
 

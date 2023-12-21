@@ -148,7 +148,7 @@ export const handler = async (event: ScheduledEvent, context: Context): Promise<
     await TaskService.sendReminders();
 
   } catch (error) {
-    console.error('Failed to send task reminders. Detail:', error);
+    Logger.error('Failed to send task reminders. Detail:', error);
     throw new ServiceError(error);
   }
 };
@@ -159,11 +159,11 @@ Next, we need to _"middyfy"_ the handler function. This is just a fancy way of s
 _/handlers/task-scheduled/index.ts_
 
 ```ts
-import { middyfyScheduled } from '@leanstacks/serverless-common';
+import { Logger, middyfyScheduled } from '@leanstacks/serverless-common';
 
 import { handler } from './handler';
 
-export const handle = middyfyScheduled({ handler, logger: console.log });
+export const handle = middyfyScheduled({ handler, logger: Logger });
 ```
 
 ## Creating a SNS event handler
@@ -190,7 +190,7 @@ export const handler = async (event: SNSEvent, context: Context): Promise<void> 
     const tasks:Task[] = await Promise.all(promises);
 
   } catch (error) {
-    console.error('Failed to create tasks. Detail:', error);
+    Logger.error('Failed to create tasks. Detail:', error);
     throw new ServiceError(error);
   }
 };
@@ -201,11 +201,11 @@ Next, we need to _"middyfy"_ the handler function. This is just a fancy way of s
 _/handlers/task-sns/index.ts_
 
 ```ts
-import { middyfySNS } from '@leanstacks/serverless-common';
+import { Logger, middyfySNS } from '@leanstacks/serverless-common';
 
 import { handler } from './handler';
 
-export const handle = middyfySNS({ handler, logger: console.log });
+export const handle = middyfySNS({ handler, logger: Logger });
 ```
 
 The handler is wrapped with two middlewares.
@@ -247,7 +247,7 @@ export const handler = async (event: SNSEvent, context: Context): Promise<SQSBat
 
     return response;
   } catch (error) {
-    console.error('Failed to create tasks. Detail:', error);
+    Logger.error('Failed to create tasks. Detail:', error);
     throw new ServiceError(error);
   }
 };
@@ -258,11 +258,11 @@ Next, we need to _"middyfy"_ the handler function. This is just a fancy way of s
 _/handlers/task-sqs/index.ts_
 
 ```ts
-import { middyfySQS } from '@leanstacks/serverless-common';
+import { Logger, middyfySQS } from '@leanstacks/serverless-common';
 
 import { handler } from './handler';
 
-export const handle = middyfySQS({ handler, logger: console.log });
+export const handle = middyfySQS({ handler, logger: Logger });
 ```
 
 The handler is wrapped with two middlewares.
@@ -319,7 +319,7 @@ export const handler = async (
       };
     }
   } catch (error) {
-    console.warn(`Failed to find Task. Detail: ${error}`);
+    Logger.warn(`Failed to find Task. Detail: ${error}`);
     return {
       status: 500,
       statusText: `${error}`,
@@ -334,11 +334,11 @@ Next, we need to _"middyfy"_ the handler function. This is just a fancy way of s
 _/handlers/task-lambda/index.ts_
 
 ```ts
-import { middyfyLambda } from '@leanstacks/serverless-common';
+import { Logger, middyfyLambda } from '@leanstacks/serverless-common';
 
 import { handler } from './handler';
 
-export const handle = middyfyLambda({ handler, logger: console.log });
+export const handle = middyfyLambda({ handler, logger: Logger });
 ```
 
 The handler is wrapped with one middleware.

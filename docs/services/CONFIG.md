@@ -28,7 +28,7 @@ This ready to use object is of type [`LambdaConfig`](/src/services/config.servic
 // some-component.ts
 import { lambdaConfigValues as config } from '@leanstacks/serverless-common';
 
-console.log(`The region is ${config.AWS_REGON}`);
+Logger.debug(`The region is ${config.AWS_REGON}`);
 ```
 
 ## Extending `LambdaConfig` with custom configuration attributes
@@ -69,7 +69,7 @@ serverless component. For example...
 // some-component.ts
 import config from 'my-config';
 
-console.log(`The table name is ${config.TABLE_NAME}`);
+Logger.debug(`The table name is ${config.TABLE_NAME}`);
 ```
 
 ## Performance considerations
