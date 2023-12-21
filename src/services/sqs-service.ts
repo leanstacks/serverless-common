@@ -10,7 +10,7 @@ import { baseConfigValues as config } from './config.service';
 import Logger from '../utils/logger';
 
 const clientConfig: SQSClientConfig = {
-  region: config.AWS_LAMBDA_FUNCTION_VERSION,
+  region: config.AWS_REGION,
 };
 
 Logger.debug('SQSService::creating new SQSClient', { data: { clientConfig } });
