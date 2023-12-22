@@ -1,5 +1,4 @@
 import middy from '@middy/core';
-import eventNormalizer from '@middy/event-normalizer';
 import httpEventNormalizer from '@middy/http-event-normalizer';
 import jsonBodyParser from '@middy/http-json-body-parser';
 import {
@@ -8,7 +7,7 @@ import {
   Context,
   ScheduledEvent,
   SQSHandler,
-  SNSEvent,
+  SNSHandler,
 } from 'aws-lambda';
 import { ObjectSchema } from 'joi';
 
@@ -29,11 +28,6 @@ export type APIGatewayHandlerFn = (
  * (e.g. cron events from AWS EventBridge).
  */
 export type ScheduledHandlerFn = (event: ScheduledEvent, context: Context) => Promise<void>;
-
-/**
- * The AWS Lambda handler function signature for SNS events.
- */
-export type SNSHandlerFn = (event: SNSEvent, context: Context) => Promise<void>;
 
 /**
  * A Lambda function for invocation by another Lambda function.
@@ -86,7 +80,7 @@ export type ScheduledMiddyfyOptions = MiddyfyOptions<ScheduledHandlerFn> & {
 /**
  * Options for middyfied SNS event handler functions.
  */
-export type SNSMiddyfyOptions = MiddyfyOptions<SNSHandlerFn> & {
+export type SNSMiddyfyOptions = MiddyfyOptions<SNSHandler> & {
   eventSchema?: ObjectSchema;
 };
 
@@ -147,7 +141,6 @@ export const middyfyScheduled = (options: ScheduledMiddyfyOptions) => {
 export const middyfySNS = (options: SNSMiddyfyOptions) => {
   return middy(options.handler)
     .use(loggerInitializer())
-    .use(eventNormalizer())
     .use(validator({ eventSchema: options.eventSchema }));
 };
 
@@ -160,7 +153,6 @@ export const middyfySNS = (options: SNSMiddyfyOptions) => {
 export const middyfySQS = (options: SQSMiddyfyOptions) => {
   return middy(options.handler)
     .use(loggerInitializer())
-    .use(eventNormalizer())
     .use(validator({ eventSchema: options.eventSchema }));
 };
 
