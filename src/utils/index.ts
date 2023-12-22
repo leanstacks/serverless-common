@@ -13,6 +13,7 @@ export {
   LambdaMiddyfyOptions,
   ScheduledHandlerFn,
   ScheduledMiddyfyOptions,
+  SNSHandlerFn,
   SNSMiddyfyOptions,
   SQSMiddyfyOptions,
 } from './middyfy';
