@@ -6,8 +6,9 @@ import {
   APIGatewayProxyResult,
   Context,
   ScheduledEvent,
-  SQSHandler,
-  SNSHandler,
+  SNSEvent,
+  SQSEvent,
+  SQSBatchResponse,
 } from 'aws-lambda';
 import { ObjectSchema } from 'joi';
 
@@ -28,6 +29,16 @@ export type APIGatewayHandlerFn = (
  * (e.g. cron events from AWS EventBridge).
  */
 export type ScheduledHandlerFn = (event: ScheduledEvent, context: Context) => Promise<void>;
+
+/**
+ * The AWS Lambda handler function signature for SNS events.
+ */
+export type SNSHandlerFn = (event: SNSEvent, context: Context) => Promise<void>;
+
+/**
+ * The AWS Lambda handler function signature for SQS events.
+ */
+export type SQSHandlerFn = (event: SQSEvent, context: Context) => Promise<SQSBatchResponse | void>;
 
 /**
  * A Lambda function for invocation by another Lambda function.
@@ -80,14 +91,14 @@ export type ScheduledMiddyfyOptions = MiddyfyOptions<ScheduledHandlerFn> & {
 /**
  * Options for middyfied SNS event handler functions.
  */
-export type SNSMiddyfyOptions = MiddyfyOptions<SNSHandler> & {
+export type SNSMiddyfyOptions = MiddyfyOptions<SNSHandlerFn> & {
   eventSchema?: ObjectSchema;
 };
 
 /**
  * Options for middyfied SQS event handler functions.
  */
-export type SQSMiddyfyOptions = MiddyfyOptions<SQSHandler> & {
+export type SQSMiddyfyOptions = MiddyfyOptions<SQSHandlerFn> & {
   eventSchema?: ObjectSchema;
 };
 

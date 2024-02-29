@@ -1,3 +1,5 @@
+import { jest } from '@jest/globals';
+
 import { ServiceError } from '../../errors/service.error';
 import ConfigService, { BaseConfig, baseConfigSchema } from '../config.service';
 

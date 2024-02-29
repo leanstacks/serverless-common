@@ -1,7 +1,9 @@
-import EmailService from '../email-service';
+import { jest } from '@jest/globals';
 
 import SQSService from '../sqs-service';
 import { emailFixture } from '../../__fixtures__/email-service.fixture';
+
+import EmailService from '../email-service';
 
 describe('EmailService', () => {
   const QUEUE_URL = 'queue-url';
