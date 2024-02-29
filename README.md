@@ -10,7 +10,7 @@ A suite of common components used to compose serverless application components f
 
 This library requires the following:
 
-- Node >= 18.17.x
+- Node >= 20.11.x
 
 ## Install
 

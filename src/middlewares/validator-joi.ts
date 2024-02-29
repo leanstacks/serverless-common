@@ -1,5 +1,5 @@
 import middy, { MiddlewareObj } from '@middy/core';
-import * as Joi from 'joi';
+import Joi from 'joi';
 
 import Logger from '../utils/logger';
 import { BadRequestError } from '../errors/bad-request.error';
