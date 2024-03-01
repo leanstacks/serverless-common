@@ -7,46 +7,67 @@ on:
 
 jobs:
   build:
-    name: 'Build'
+    name: Build
 
     runs-on: ubuntu-latest
     timeout-minutes: 5
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v3
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
           cache: 'npm'
-      - run: npm ci
-      - run: npm run build
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
 
   test:
-    name: 'Test'
+    name: Test
 
     runs-on: ubuntu-latest
     timeout-minutes: 5
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v3
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
           cache: 'npm'
-      - run: npm ci
-      - run: npm run test:coverage
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Unit Tests
+        run: npm run test:coverage
 
   lint:
-    name: 'Lint'
+    name: Lint
 
     runs-on: ubuntu-latest
     timeout-minutes: 5
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v3
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
           cache: 'npm'
-      - run: npm ci
-      - run: npm run lint
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Linter
+        run: npm run lint
